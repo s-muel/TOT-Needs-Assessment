@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:recipe_app/controller/recipe_manager.dart';
 import 'package:recipe_app/model/recipe_model.dart' as recipe_model;
+import 'package:recipe_app/views/bookmark_view.dart';
 import 'package:recipe_app/views/detail_view_example.dart';
 
 class HomeView extends StatefulWidget {
@@ -137,7 +138,13 @@ class _HomeViewState extends State<HomeView> {
                       return GestureDetector(
                         onTap: () {
                           //TODO: PASS RECIPE DATA TO DETAILS VIEW
-                      
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) {
+                                return DetialViewExample(recipeModel: model);
+                              },
+                            ),
+                          );
                         },
                         child: Container(
                           margin: const EdgeInsets.only(right: 10),
@@ -165,9 +172,9 @@ class _HomeViewState extends State<HomeView> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          //TODO: PASS THE RIGHT TITLE DATA TO TEXT WIDGET
+                                          //DONE
                                           Text(
-                                            "recipe title here",
+                                            model.title,
                                             style: Theme.of(context)
                                                 .textTheme
                                                 .headline5!
@@ -210,7 +217,7 @@ class _HomeViewState extends State<HomeView> {
                         ),
                       );
                     },
-                    itemCount:1000, //TODO: PASS THE RIGHT LENGTH TO ITEM COUNT
+                    itemCount: snapshot.data?.length, //Done
                   ),
                 );
               })
@@ -221,6 +228,19 @@ class _HomeViewState extends State<HomeView> {
         currentIndex: _currentIndex,
         onTap: (value) => setState(() {
           _currentIndex = value;
+          switch (_currentIndex) {
+            case 0:
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => const HomeView()));
+              break;
+            case 1:
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const BookmarkView()));
+              break;
+            default:
+          }
         }),
         selectedItemColor: Colors.amber,
         unselectedItemColor: Colors.grey,

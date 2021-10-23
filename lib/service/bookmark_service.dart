@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:recipe_app/model/recipe_model.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class BookmarkService {
   late Database db;
@@ -14,7 +15,10 @@ class BookmarkService {
   String columnVideo = 'video';
   String columnIngredents = 'ingredents';
 
-  Future open(String path) async {
+  Future open() async {
+    String databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'demo.db');
+
     db = await openDatabase(path, version: 1,
         onCreate: (Database db, int version) async {
       await db.execute('''
@@ -25,7 +29,7 @@ create table $tableRecipe (
   $columnRate double not null,
   $columnImage text not null,
   $columnVideo text not null,
-  $columnIngredents array not null)
+  $columnIngredents text not null)
 ''');
     });
   }
@@ -35,17 +39,16 @@ create table $tableRecipe (
     return recipeModel;
   }
 
-   Future<List<RecipeModel>?> getAllRecipe() async {
-    List<Map<String,dynamic>> maps = await db.query(tableRecipe,
-        columns: [
-          columnId,
-          columnCategory,
-          columnImage,
-          columnIngredents,
-          columnRate,
-          columnVideo,
-          columnTitle
-        ]);
+  Future<List<RecipeModel>?> getAllRecipe() async {
+    List<Map<String, dynamic>> maps = await db.query(tableRecipe, columns: [
+      columnId,
+      columnCategory,
+      columnImage,
+      columnIngredents,
+      columnRate,
+      columnVideo,
+      columnTitle
+    ]);
     if (maps.isNotEmpty) {
       return recipeModelFromJson(jsonEncode(maps));
     }
@@ -53,7 +56,7 @@ create table $tableRecipe (
   }
 
   Future<RecipeModel?> getRecipe(int id) async {
-    List<Map<String,dynamic>> maps = await db.query(tableRecipe,
+    List<Map<String, dynamic>> maps = await db.query(tableRecipe,
         columns: [
           columnId,
           columnCategory,

@@ -34,18 +34,20 @@ class BookmarkManager with ChangeNotifier {
     } finally {
       await bookmarkService.close();
     }
+  }
 
-    removeFromBookmarks(RecipeModel recipeModel) async {
-      try {
-        await bookmarkService.open();
-        int deleteCount = await bookmarkService.delete(recipeModel.id!);
-        print('Removed $deleteCount recipies from bookmark');
-        await getAllBookmarks();
-      } catch (error) {
-        print('Something went wrong ${error}');
-      } finally {
-        await bookmarkService.close();
-      }
+  Future<int> removeFromBookmarks(RecipeModel recipeModel) async {
+    try {
+      await bookmarkService.open();
+      int deleteCount = await bookmarkService.delete(recipeModel.id!);
+      print('Removed $deleteCount recipies from bookmark');
+      await getAllBookmarks();
+      return deleteCount;
+    } catch (error) {
+      print('Something went wrong ${error}');
+      return 0;
+    } finally {
+      await bookmarkService.close();
     }
   }
 }
